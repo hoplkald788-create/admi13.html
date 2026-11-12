@@ -1,71 +1,78 @@
-<?php
-// إعدادات الاتصال بقاعدة البيانات
-$host   = "fdb1030.awardspace.net";
-$dbuser = "4797238_ohkjj";
-$dbpass = "Aa12345678##";
-$dbname = "4797238_ohkjj";
-
-$conn = new mysqli($host, $dbuser, $dbpass, $dbname);
-
-if ($conn->connect_error) {
-    die("فشل الاتصال بقاعدة البيانات: " . $conn->connect_error);
-}
-echo "<div style='color:green; font-weight:bold; text-align:center;'>✅ تم الاتصال بقاعدة البيانات بنجاح</div>";
-
-// إنشاء الجداول لو مش موجودة
-$conn->query("CREATE TABLE IF NOT EXISTS users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    account_number VARCHAR(50) UNIQUE NOT NULL,
-    username VARCHAR(100) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    balance DECIMAL(15,2) DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)");
-
-$message = "";
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create_user'])) {
-    $username = trim($_POST['username']);
-    $acc_num  = trim($_POST['account_number']);
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-
-    $stmt = $conn->prepare("INSERT INTO users (username, account_number, password) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss", $username, $acc_num, $password);
-
-    if ($stmt->execute()) {
-        $message = "<div style='color:green; text-align:center;'>✅ تم إنشاء حساب بنجاح!</div>";
-    } else {
-        $message = "<div style='color:red; text-align:center;'>❌ فشل إنشاء الحساب: " . $stmt->error . "</div>";
-    }
-    $stmt->close();
-}
-?>
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إنشاء حساب جديد</title>
+    <title>موقعي الثابت</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; padding: 20px; }
-        .container { max-width: 400px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #333; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
-        button:hover { background: #218838; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0f172a; color: #e2e8f0; line-height: 1.6; }
+        
+        /* القائمة العلوية */
+        header { background-color: #1e293b; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #3b82f6; position: sticky; top: 0; z-index: 100; }
+        header h1 { font-size: 1.5rem; color: #3b82f6; }
+        nav a { color: #cbd5e1; text-decoration: none; margin-right: 15px; font-weight: bold; transition: color 0.3s; }
+        nav a:hover { color: #3b82f6; }
+
+        /* القسم الرئيسي (Hero) */
+        .hero { background: linear-gradient(135deg, #1e293b, #0f172a); text-align: center; padding: 100px 20px; border-bottom: 1px solid #334155; }
+        .hero h2 { font-size: 3rem; margin-bottom: 15px; color: #ffffff; }
+        .hero p { font-size: 1.2rem; margin-bottom: 30px; color: #94a3b8; }
+        .btn { display: inline-block; background: linear-gradient(to right, #3b82f6, #8b5cf6); color: white; padding: 15px 35px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 1.1rem; transition: transform 0.3s, box-shadow 0.3s; }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4); }
+
+        /* قسم الخدمات */
+        .features { padding: 80px 20px; text-align: center; background-color: #1e293b; }
+        .features h2 { margin-bottom: 50px; color: #ffffff; font-size: 2rem; }
+        .grid { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
+        .card { background: #0f172a; padding: 40px 30px; border-radius: 15px; width: 320px; border: 1px solid #334155; transition: transform 0.3s, border-color 0.3s; }
+        .card:hover { transform: translateY(-10px); border-color: #3b82f6; }
+        .card h3 { color: #3b82f6; margin-bottom: 15px; font-size: 1.3rem; }
+        .card p { color: #94a3b8; }
+
+        /* التذييل */
+        footer { background-color: #0f172a; color: #94a3b8; text-align: center; padding: 30px; border-top: 1px solid #334155; margin-top: 40px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>إنشاء حساب جديد</h2>
-        <?php echo $message; ?>
-        <form method="POST">
-            <input type="text" name="username" placeholder="اسم المستخدم" required>
-            <input type="text" name="account_number" placeholder="رقم الحساب (مثلاً 12345)" required>
-            <input type="password" name="password" placeholder="كلمة المرور" required>
-            <button type="submit" name="create_user">إنشاء الحساب</button>
-        </form>
-    </div>
+
+    <header>
+        <h1>موقعي</h1>
+        <nav>
+            <a href="#home">الرئيسية</a>
+            <a href="#services">الخدمات</a>
+            <a href="#contact">تواصل معنا</a>
+        </nav>
+    </header>
+
+    <section class="hero" id="home">
+        <h2>مرحباً بك في موقعي الجديد</h2>
+        <p>هذا موقع ثابت تم تصميمه باستخدام HTML و CSS، وهو سريع جداً ومتوافق مع جميع الأجهزة.</p>
+        <a href="#services" class="btn">اكتشف خدماتنا</a>
+    </section>
+
+    <section class="features" id="services">
+        <h2>لماذا تختارنا؟</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>🚀 سرعة فائقة</h3>
+                <p>الموقع سريع جداً لأنه لا يحتوي على قاعدة بيانات أو أكواد معقدة.</p>
+            </div>
+            <div class="card">
+                <h3>💻 تصميم متجاوب</h3>
+                <p>يعمل بشكل ممتاز على الجوالات، الأجهزة اللوحية، وأجهزة الكمبيوتر.</p>
+            </div>
+            <div class="card">
+                <h3>🔒 أمان عالي</h3>
+                <p>بما أنه موقع ثابت، فهو محمي من معظم الثغرات الأمنية الشائعة.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <p>جميع الحقوق محفوظة &copy; 2024 - موقعي</p>
+        <p>للتواصل: info@mywebsite.com</p>
+    </footer>
+
 </body>
 </html>
